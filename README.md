@@ -1,3 +1,5 @@
+# A Copy of the Slide Puzzle Flutter Challenge
+
 # Slide Puzzle
 
 ![Photo Booth Header][logo]
