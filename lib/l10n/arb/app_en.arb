@@ -24,6 +24,14 @@
     "@puzzleShuffle": {
         "description": "Shown on the button that shuffle the puzzle"
     },
+     "puzzleReset": "Reset",
+     "@puzzleReset": {
+        "description": "Shown on the button that resets the puzzle"
+    },
+    "puzzleLost": "Too many moves. Try again!",
+    "@puzzleLost": {
+        "description": "Shown as the loss state when the puzzle took too many moves to complete"
+    },
     "puzzleCompleted": "Well done. Congrats!",
     "@puzzleCompleted": {
         "description": "Shown as the success state when the puzzle is completed"

@@ -60,20 +60,6 @@ class Puzzle extends Equatable {
     return tiles.singleWhere((tile) => tile.isWhitespace);
   }
 
-  /// Gets the number of tiles that are currently in their correct position.
-  // int getNumberOfCorrectTiles() {
-  //   final whitespaceTile = getWhitespaceTile();
-  //   var numberOfCorrectTiles = 0;
-  //   for (final tile in tiles) {
-  //     if (tile != whitespaceTile) {
-  //       if (tile.currentPosition == tile.correctPosition) {
-  //         numberOfCorrectTiles++;
-  //       }
-  //     }
-  //   }
-  //   return numberOfCorrectTiles;
-  // }
-
   /// Determines if the puzzle is completed.
   bool isComplete() {
     return false; //(tiles.length - 1) - getNumberOfCorrectTiles() == 0;
@@ -200,7 +186,8 @@ class Puzzle extends Equatable {
     return Puzzle(
         puzzleNumber: puzzleNumber,
         tiles: tiles,
-        maxNumberOfMoves: maxNumberOfMoves);
+        maxNumberOfMoves: maxNumberOfMoves,
+    );
   }
 
   /// Sorts puzzle tiles so they are in order of their current position.
@@ -212,7 +199,8 @@ class Puzzle extends Equatable {
     return Puzzle(
         puzzleNumber: puzzleNumber,
         tiles: sortedTiles,
-        maxNumberOfMoves: maxNumberOfMoves);
+        maxNumberOfMoves: maxNumberOfMoves,
+    );
   }
 
   @override

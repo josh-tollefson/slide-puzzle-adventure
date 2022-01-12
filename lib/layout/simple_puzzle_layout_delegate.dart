@@ -8,7 +8,6 @@ import 'package:very_good_slide_puzzle/models/models.dart';
 import 'package:very_good_slide_puzzle/puzzle/puzzle.dart';
 import 'package:very_good_slide_puzzle/theme/theme.dart';
 import 'package:very_good_slide_puzzle/theme/widgets/level_and_moves_left.dart';
-import 'package:very_good_slide_puzzle/typography/typography.dart';
 
 /// {@template simple_puzzle_layout_delegate}
 /// A delegate for computing the layout of the puzzle UI
@@ -40,8 +39,8 @@ class SimplePuzzleLayoutDelegate extends PuzzleLayoutDelegate {
           medium: 48,
         ),
         ResponsiveLayoutBuilder(
-          small: (_, child) => const SimplePuzzleShuffleButton(),
-          medium: (_, child) => const SimplePuzzleShuffleButton(),
+          small: (_, child) => const SimplePuzzleResetButton(),
+          medium: (_, child) => const SimplePuzzleResetButton(),
           large: (_, __) => const SizedBox(),
         ),
         const ResponsiveGap(
@@ -203,15 +202,11 @@ class SimpleStartSection extends StatelessWidget {
           remainingNumberOfMoves: state.remainingNumberOfMoves,
           maxNumberOfMoves: state.puzzle.maxNumberOfMoves,
         ),
-        // NumberOfMovesAndTilesLeft(
-        //   numberOfMoves: state.numberOfMoves,
-        //   numberOfTilesLeft: 0,//state.numberOfTilesLeft,
-        // ),
         const ResponsiveGap(large: 32),
         ResponsiveLayoutBuilder(
           small: (_, __) => const SizedBox(),
           medium: (_, __) => const SizedBox(),
-          large: (_, __) => const SimplePuzzleShuffleButton(),
+          large: (_, __) => const SimplePuzzleResetButton(),
         ),
       ],
     );
@@ -235,12 +230,24 @@ class SimplePuzzleTitle extends StatelessWidget {
   /// The state of the puzzle.
   final PuzzleStatus status;
 
+
   @override
   Widget build(BuildContext context) {
+
+    String getPuzzleTitle(PuzzleStatus status) {
+      if (status == PuzzleStatus.complete) {
+        return context.l10n.puzzleCompleted;
+      }
+      else if (status == PuzzleStatus.lost) {
+        return context.l10n.puzzleLost;
+      }
+      else {
+        return context.l10n.puzzleChallengeTitle;
+      }
+    }
+
     return PuzzleTitle(
-      title: status == PuzzleStatus.complete
-          ? context.l10n.puzzleCompleted.toString()
-          : context.l10n.puzzleChallengeTitle.toString(),
+      title: getPuzzleTitle(status),
     );
   }
 }
@@ -326,41 +333,9 @@ class SimplePuzzleTile extends StatelessWidget {
         child: Image.asset(
             '../assets/images/scenery/${tile.image}',
             fit: BoxFit.cover,
-        )
+        ),
     );
 
-      //Image.asset('../assets/images/tile_background.png'));
-    return TextButton(
-        style: TextButton.styleFrom(
-          primary: PuzzleColors.white,
-          textStyle: PuzzleTextStyle.headline2.copyWith(
-            fontSize: tileFontSize,
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(12),
-            ),
-          ),
-        ).copyWith(
-          foregroundColor: MaterialStateProperty.all(PuzzleColors.white),
-          backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-            (states) {
-              if (tile.value == state.lastTappedTile?.value) {
-                return theme.pressedColor;
-              } else if (states.contains(MaterialState.hovered)) {
-                return theme.hoverColor;
-              } else {
-                return theme.defaultColor;
-              }
-            },
-          ),
-        ),
-        onPressed: state.puzzleStatus == PuzzleStatus.incomplete
-            ? () => context.read<PuzzleBloc>().add(TileTapped(tile))
-            : null,
-        child: Image.asset(
-            '../assets/images/tile_background.png') //Text(tile.value.toString()),
-        );
   }
 }
 
@@ -387,7 +362,37 @@ class SimplePuzzleShuffleButton extends StatelessWidget {
             height: 17,
           ),
           const Gap(10),
-          Text(context.l10n.puzzleShuffle.toString()),
+          Text(context.l10n.puzzleShuffle),
+        ],
+      ),
+    );
+  }
+}
+
+/// {@template puzzle_shuffle_button}
+/// Displays the button to shuffle the puzzle.
+/// {@endtemplate}
+@visibleForTesting
+class SimplePuzzleResetButton extends StatelessWidget {
+  /// {@macro puzzle_shuffle_button}
+  const SimplePuzzleResetButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return PuzzleButton(
+      textColor: PuzzleColors.primary0,
+      backgroundColor: PuzzleColors.primary6,
+      onPressed: () => context.read<PuzzleBloc>().add(const PuzzleReset()),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/shuffle_icon.png',
+            width: 17,
+            height: 17,
+          ),
+          const Gap(10),
+          Text(context.l10n.puzzleReset),
         ],
       ),
     );
