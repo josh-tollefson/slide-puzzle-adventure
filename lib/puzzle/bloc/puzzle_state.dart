@@ -13,7 +13,6 @@ class PuzzleState extends Equatable {
     this.tileMovementStatus = TileMovementStatus.nothingTapped,
     // this.numberOfCorrectTiles = 0,
     this.numberOfMoves = 0,
-    // this.numberOfMovesLeft = 100,
     this.lastTappedTile,
   });
 
@@ -36,7 +35,7 @@ class PuzzleState extends Equatable {
   // final int numberOfCorrectTiles;
 
   /// Number of tiles currently not in their correct position.
-  int get numberOfMovesLeft => puzzle.maxNumberOfMoves - numberOfMoves;
+  int get remainingNumberOfMoves => puzzle.maxNumberOfMoves - numberOfMoves;
 
   /// Number representing how many moves have been made on the current puzzle.
   ///
