@@ -3,8 +3,8 @@ import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:very_good_slide_puzzle/models/models.dart';
 import 'package:very_good_slide_puzzle/level/puzzle_levels.dart';
+import 'package:very_good_slide_puzzle/models/models.dart';
 
 part 'puzzle_event.dart';
 part 'puzzle_state.dart';
@@ -36,7 +36,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
         final mutablePuzzle = Puzzle(
             puzzleNumber: state.puzzle.puzzleNumber,
             tiles: [...state.puzzle.tiles],
-            maxNumberOfMoves: state.puzzle.maxNumberOfMoves
+            maxNumberOfMoves: state.puzzle.maxNumberOfMoves,
         );
         final puzzle = mutablePuzzle.moveTiles(tappedTile, []);
         if (puzzle.isComplete()) {
