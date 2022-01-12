@@ -33,10 +33,20 @@ import 'package:very_good_slide_puzzle/models/models.dart';
 /// {@endtemplate}
 class Puzzle extends Equatable {
   /// {@macro puzzle}
-  const Puzzle({required this.tiles});
+  const Puzzle({
+    this.puzzleNumber = 0,
+    required this.tiles,
+    this.maxNumberOfMoves = 0,
+  });
+
+  /// puzzle number
+  final int puzzleNumber;
 
   /// List of [Tile]s representing the puzzle's current arrangement.
   final List<Tile> tiles;
+
+  /// maximum number of moves to solve the puzzle
+  final int maxNumberOfMoves;
 
   /// Get the dimension of a puzzle given its tile arrangement.
   ///
@@ -86,62 +96,62 @@ class Puzzle extends Equatable {
   }
 
   /// Determines if the puzzle is solvable.
-  // bool isSolvable() {
-  //   final size = getDimension();
-  //   final height = tiles.length ~/ size;
-  //   assert(
-  //     size * height == tiles.length,
-  //     'tiles must be equal to size * height',
-  //   );
-  //   final inversions = countInversions();
-  //
-  //   if (size.isOdd) {
-  //     return inversions.isEven;
-  //   }
-  //
-  //   final whitespace = tiles.singleWhere((tile) => tile.isWhitespace);
-  //   final whitespaceRow = whitespace.currentPosition.y;
-  //
-  //   if (((height - whitespaceRow) + 1).isOdd) {
-  //     return inversions.isEven;
-  //   } else {
-  //     return inversions.isOdd;
-  //   }
-  // }
+  bool isSolvable() {
+    final size = getDimension();
+    final height = tiles.length ~/ size;
+    assert(
+    size * height == tiles.length,
+    'tiles must be equal to size * height',
+    );
+    final inversions = countInversions();
+
+    if (size.isOdd) {
+      return inversions.isEven;
+    }
+
+    final whitespace = tiles.singleWhere((tile) => tile.isWhitespace);
+    final whitespaceRow = whitespace.currentPosition.y;
+
+    if (((height - whitespaceRow) + 1).isOdd) {
+      return inversions.isEven;
+    } else {
+      return inversions.isOdd;
+    }
+  }
 
   /// Gives the number of inversions in a puzzle given its tile arrangement.
   ///
   /// An inversion is when a tile of a lower value is in a greater position than
   /// a tile of a higher value.
-  // int countInversions() {
-  //   var count = 0;
-  //   for (var a = 0; a < tiles.length; a++) {
-  //     final tileA = tiles[a];
-  //     if (tileA.isWhitespace) {
-  //       continue;
-  //     }
-  //
-  //     for (var b = a + 1; b < tiles.length; b++) {
-  //       final tileB = tiles[b];
-  //       if (_isInversion(tileA, tileB)) {
-  //         count++;
-  //       }
-  //     }
-  //   }
-  //   return count;
-  // }
+  int countInversions() {
+    var count = 0;
+    for (var a = 0; a < tiles.length; a++) {
+      final tileA = tiles[a];
+      if (tileA.isWhitespace) {
+        continue;
+      }
+
+      for (var b = a + 1; b < tiles.length; b++) {
+        final tileB = tiles[b];
+        if (_isInversion(tileA, tileB)) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
 
   /// Determines if the two tiles are inverted.
-  // bool _isInversion(Tile a, Tile b) {
-  //   if (!b.isWhitespace && a.value != b.value) {
-  //     if (b.value < a.value) {
-  //       return b.currentPosition.compareTo(a.currentPosition) > 0;
-  //     } else {
-  //       return a.currentPosition.compareTo(b.currentPosition) > 0;
-  //     }
-  //   }
-  //   return false;
-  // }
+  bool _isInversion(Tile a, Tile b) {
+    if (!b.isWhitespace && a.value != b.value) {
+      if (b.value < a.value) {
+        return b.currentPosition.compareTo(a.currentPosition) > 0;
+      } else {
+        return a.currentPosition.compareTo(b.currentPosition) > 0;
+      }
+    }
+    return false;
+  }
 
   /// Shifts one or many tiles in a row/column with the whitespace and returns
   /// the modified puzzle.
@@ -157,8 +167,8 @@ class Puzzle extends Equatable {
       final shiftPointX = tile.currentPosition.x + deltaX.sign;
       final shiftPointY = tile.currentPosition.y + deltaY.sign;
       final tileToSwapWith = tiles.singleWhere(
-        (tile) =>
-            tile.currentPosition.x == shiftPointX &&
+            (tile) =>
+        tile.currentPosition.x == shiftPointX &&
             tile.currentPosition.y == shiftPointY,
       );
       tilesToSwap.add(tile);

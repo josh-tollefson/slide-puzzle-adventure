@@ -200,7 +200,7 @@ class SimpleStartSection extends StatelessWidget {
         ),
         NumberOfMovesAndTilesLeft(
           numberOfMoves: state.numberOfMoves,
-          numberOfTilesLeft: state.numberOfTilesLeft,
+          numberOfTilesLeft: 0,//state.numberOfTilesLeft,
         ),
         const ResponsiveGap(large: 32),
         ResponsiveLayoutBuilder(
@@ -319,7 +319,7 @@ class SimplePuzzleTile extends StatelessWidget {
     return GestureDetector(
         onTap: () => context.read<PuzzleBloc>().add(TileTapped(tile)),
         child: Image.asset(
-            '../assets/images/scenery/tile_${tile.value.toString()}_river_filled.png',
+            '../assets/images/scenery/${tile.image}',
             fit: BoxFit.cover,
         )
     );
