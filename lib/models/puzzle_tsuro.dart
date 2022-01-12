@@ -197,7 +197,10 @@ class Puzzle extends Equatable {
       );
     }
 
-    return Puzzle(tiles: tiles);
+    return Puzzle(
+        puzzleNumber: puzzleNumber,
+        tiles: tiles,
+        maxNumberOfMoves: maxNumberOfMoves);
   }
 
   /// Sorts puzzle tiles so they are in order of their current position.
@@ -206,7 +209,10 @@ class Puzzle extends Equatable {
       ..sort((tileA, tileB) {
         return tileA.currentPosition.compareTo(tileB.currentPosition);
       });
-    return Puzzle(tiles: sortedTiles);
+    return Puzzle(
+        puzzleNumber: puzzleNumber,
+        tiles: sortedTiles,
+        maxNumberOfMoves: maxNumberOfMoves);
   }
 
   @override

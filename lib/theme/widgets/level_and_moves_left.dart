@@ -11,11 +11,11 @@ import 'package:very_good_slide_puzzle/typography/typography.dart';
 /// {@endtemplate}
 class LevelAndMovesLeft extends StatelessWidget {
   /// {@macro number_of_moves_and_tiles_left}
-  const NumberOfMovesAndTilesLeft({
+  const LevelAndMovesLeft({
     Key? key,
     required this.level,
     required this.maxNumberOfMoves,
-    required this.numberOfMoves
+    required this.remainingNumberOfMoves,
     this.color,
   }) : super(key: key);
 
@@ -26,7 +26,9 @@ class LevelAndMovesLeft extends StatelessWidget {
   final int maxNumberOfMoves;
 
   /// The number of moves done so far
-  final int numberOfMoves;
+  final int remainingNumberOfMoves;
+
+
 
   /// The color of texts that display [numberOfMoves] and [numberOfTilesLeft].
   /// Defaults to [PuzzleTheme.defaultColor].
@@ -51,29 +53,29 @@ class LevelAndMovesLeft extends StatelessWidget {
           key: const Key('levelAndNumberOfMovesLeft'),
           textAlign: TextAlign.center,
           text: TextSpan(
-            text: level.toString(),
+            text: 'Level: ${level.toString()} | ',
             style: PuzzleTextStyle.headline4.copyWith(
               color: textColor,
             ),
             children: [
               TextSpan(
-                text: ' ${l10n.puzzleNumberOfMoves} | ',
+                text: ' ${l10n.puzzleRemainingNumberOfMoves}: ',
                 style: bodyTextStyle.copyWith(
                   color: textColor,
                 ),
               ),
               TextSpan(
-                text: numberOfTilesLeft.toString(),
+                text: remainingNumberOfMoves.toString(),
                 style: PuzzleTextStyle.headline4.copyWith(
                   color: textColor,
                 ),
               ),
-              TextSpan(
-                text: ' ${l10n.puzzleNumberOfTilesLeft}',
-                style: bodyTextStyle.copyWith(
-                  color: textColor,
-                ),
-              ),
+              // TextSpan(
+              //   text: ' ${l10n.numberOfMoves}',
+              //   style: bodyTextStyle.copyWith(
+              //     color: textColor,
+              //   ),
+              // ),
             ],
           ),
         );

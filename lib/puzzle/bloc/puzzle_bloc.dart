@@ -35,7 +35,11 @@ PuzzleState(
     final tappedTile = event.tile;
     if (state.puzzleStatus == PuzzleStatus.incomplete) {
       if (state.puzzle.isTileMovable(tappedTile)) {
-        final mutablePuzzle = Puzzle(tiles: [...state.puzzle.tiles]);
+        final mutablePuzzle = Puzzle(
+            puzzleNumber: state.puzzle.puzzleNumber,
+            tiles: [...state.puzzle.tiles],
+            maxNumberOfMoves: state.puzzle.maxNumberOfMoves
+        );
         final puzzle = mutablePuzzle.moveTiles(tappedTile, []);
         if (puzzle.isComplete()) {
           emit(
@@ -116,9 +120,7 @@ PuzzleState(
       }
     }
 
-    var puzzle = Puzzle(tiles: currentPuzzle.tiles);
-
-    return puzzle;
+    return currentPuzzle;
   }
 
   /// Build a randomized, solvable puzzle of the given size.

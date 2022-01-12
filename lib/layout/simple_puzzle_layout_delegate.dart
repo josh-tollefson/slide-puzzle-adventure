@@ -7,6 +7,7 @@ import 'package:very_good_slide_puzzle/layout/layout.dart';
 import 'package:very_good_slide_puzzle/models/models.dart';
 import 'package:very_good_slide_puzzle/puzzle/puzzle.dart';
 import 'package:very_good_slide_puzzle/theme/theme.dart';
+import 'package:very_good_slide_puzzle/theme/widgets/level_and_moves_left.dart';
 import 'package:very_good_slide_puzzle/typography/typography.dart';
 
 /// {@template simple_puzzle_layout_delegate}
@@ -177,7 +178,6 @@ class SimpleStartSection extends StatelessWidget {
 
   /// The state of the puzzle.
   final PuzzleState state;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -198,10 +198,15 @@ class SimpleStartSection extends StatelessWidget {
           medium: 16,
           large: 32,
         ),
-        NumberOfMovesAndTilesLeft(
-          numberOfMoves: state.numberOfMoves,
-          numberOfTilesLeft: 0,//state.numberOfTilesLeft,
+        LevelAndMovesLeft(
+          level: state.puzzle.puzzleNumber,
+          remainingNumberOfMoves: state.remainingNumberOfMoves,
+          maxNumberOfMoves: state.puzzle.maxNumberOfMoves,
         ),
+        // NumberOfMovesAndTilesLeft(
+        //   numberOfMoves: state.numberOfMoves,
+        //   numberOfTilesLeft: 0,//state.numberOfTilesLeft,
+        // ),
         const ResponsiveGap(large: 32),
         ResponsiveLayoutBuilder(
           small: (_, __) => const SizedBox(),
@@ -234,8 +239,8 @@ class SimplePuzzleTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return PuzzleTitle(
       title: status == PuzzleStatus.complete
-          ? context.l10n.puzzleCompleted
-          : context.l10n.puzzleChallengeTitle,
+          ? context.l10n.puzzleCompleted.toString()
+          : context.l10n.puzzleChallengeTitle.toString(),
     );
   }
 }
@@ -382,7 +387,7 @@ class SimplePuzzleShuffleButton extends StatelessWidget {
             height: 17,
           ),
           const Gap(10),
-          Text(context.l10n.puzzleShuffle),
+          Text(context.l10n.puzzleShuffle.toString()),
         ],
       ),
     );

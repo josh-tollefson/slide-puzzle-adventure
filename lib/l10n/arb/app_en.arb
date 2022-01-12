@@ -8,6 +8,14 @@
     "@puzzleNumberOfMoves": {
         "description": "Indicates how many moves have been made on the current puzzle"
     },
+    "puzzleMaxNumberOfMoves": "Max Moves",
+    "@puzzleMaxNumberOfMoves": {
+        "description": "Indicates the maximum number of moves allowed to solve the current puzzle"
+    },
+    "puzzleRemainingNumberOfMoves": "Remaining Moves",
+    "@puzzleRemainingNumberOfMoves": {
+        "description": "Indicates the number of moves remaining to solve the current puzzle"
+    },
     "puzzleNumberOfTilesLeft": "Tiles",
     "@puzzleNumberOfTilesLeft": {
         "description": "Indicates how many puzzle tiles are not in their correct position"
