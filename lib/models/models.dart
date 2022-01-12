@@ -1,4 +1,4 @@
 export 'position.dart';
-export 'puzzle.dart';
+export 'puzzle_tsuro.dart';
 export 'ticker.dart';
-export 'tile.dart';
+export 'tile_tsuro.dart';
