@@ -7,7 +7,7 @@ var levels =  [
   Puzzle(
       puzzleNumber: 1,
       tiles: [TILE_1, TILE_2, TILE_3, WHITESPACE],
-      maxNumberOfMoves: 3
+      maxNumberOfMoves: 3,
   ),
 ];
 
