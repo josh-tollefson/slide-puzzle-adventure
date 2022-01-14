@@ -1,3 +1,4 @@
+export 'explorer.dart';
 export 'position.dart';
 export 'puzzle_tsuro.dart';
 export 'ticker.dart';

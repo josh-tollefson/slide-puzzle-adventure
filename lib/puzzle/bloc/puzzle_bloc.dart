@@ -1,6 +1,4 @@
 // ignore_for_file: public_member_api_docs
-import 'dart:math';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:very_good_slide_puzzle/level/puzzle_levels.dart';
@@ -12,21 +10,29 @@ part 'puzzle_state.dart';
 class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
   PuzzleBloc(this._level) : super(const PuzzleState()) {
     on<PuzzleInitialized>(_onPuzzleInitialized);
+    // on<ExplorerMoved>(_onExplorerMoved);
     on<TileTapped>(_onTileTapped);
     on<PuzzleReset>(_onPuzzleReset);
   }
 
   final int _level;
 
-  void _onPuzzleInitialized(PuzzleInitialized event,
-      Emitter<PuzzleState> emit,) {
+  void _onPuzzleInitialized(
+      PuzzleInitialized event,
+      Emitter<PuzzleState> emit,
+      ) {
     final puzzle = _generatePuzzleLevel(_level);
     emit(
       PuzzleState(
         puzzle: puzzle.sort(),
-        // numberOfCorrectTiles: puzzle.getNumberOfCorrectTiles(),
       ),
     );
+  }
+
+  void _onExplorerMoved(ExplorerMoved event, Emitter<PuzzleState> emit) {
+    if (state.puzzleStatus == PuzzleStatus.incomplete) {
+      
+    }
   }
 
   void _onTileTapped(TileTapped event, Emitter<PuzzleState> emit) {
@@ -36,6 +42,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
         final mutablePuzzle = Puzzle(
             puzzleNumber: state.puzzle.puzzleNumber,
             tiles: [...state.puzzle.tiles],
+            explorer: state.puzzle.explorer,
             maxNumberOfMoves: state.puzzle.maxNumberOfMoves,
         );
         final puzzle = mutablePuzzle.moveTiles(tappedTile, []);
@@ -88,7 +95,6 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
     emit(
       PuzzleState(
         puzzle: puzzle.sort(),
-        // numberOfCorrectTiles: puzzle.getNumberOfCorrectTiles(),
       ),
     );
   }
@@ -96,16 +102,35 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
   /// Build a randomized, solvable puzzle of the given size.
   Puzzle _generatePuzzleLevel(int level) {
     final currentPuzzle = levels[level - 1];
-    final size = sqrt(currentPuzzle.tiles.length).toInt();
+    final currentTiles = currentPuzzle.tiles;
+    final size = currentPuzzle.getDimension();
+    var newTiles = currentTiles;
 
     for (var y = 1; y <= size; y++) {
       for (var x = 1; x <= size; x++) {
+
         final position = Position(x: x, y: y);
-        currentPuzzle.tiles[x - 1 + (y - 1) * size].startPosition = position;
-        currentPuzzle.tiles[x - 1 + (y - 1) * size].currentPosition = position;
+        final newTile = Tile(
+          value: currentTiles[x - 1 + (y - 1) * size].value,
+          startPosition: position,
+          currentPosition: position,
+          paths: currentTiles[x - 1 + (y - 1) * size].paths,
+          markers: currentTiles[x - 1 + (y - 1) * size].markers,
+          image: currentTiles[x - 1 + (y - 1) * size].image,
+          isWhitespace: currentTiles[x - 1 + (y - 1) * size].isWhitespace,
+        );
+
+        newTiles[x - 1 + (y - 1) * size] = newTile;
       }
     }
 
-    return currentPuzzle;
+    final newPuzzle = Puzzle(
+      puzzleNumber: currentPuzzle.puzzleNumber,
+      tiles: newTiles,
+      explorer: currentPuzzle.explorer,
+      maxNumberOfMoves: currentPuzzle.maxNumberOfMoves,
+    );
+
+    return newPuzzle;
   }
 }

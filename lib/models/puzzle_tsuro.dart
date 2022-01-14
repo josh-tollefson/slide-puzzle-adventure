@@ -36,6 +36,7 @@ class Puzzle extends Equatable {
   const Puzzle({
     this.puzzleNumber = 0,
     required this.tiles,
+    required this.explorer,
     this.maxNumberOfMoves = 0,
   });
 
@@ -44,6 +45,9 @@ class Puzzle extends Equatable {
 
   /// List of [Tile]s representing the puzzle's current arrangement.
   final List<Tile> tiles;
+
+  /// References the explorer who must reach the end of the puzzle.
+  final Explorer explorer;
 
   /// maximum number of moves to solve the puzzle
   final int maxNumberOfMoves;
@@ -81,63 +85,6 @@ class Puzzle extends Equatable {
     return true;
   }
 
-  /// Determines if the puzzle is solvable.
-  bool isSolvable() {
-    final size = getDimension();
-    final height = tiles.length ~/ size;
-    assert(
-    size * height == tiles.length,
-    'tiles must be equal to size * height',
-    );
-    final inversions = countInversions();
-
-    if (size.isOdd) {
-      return inversions.isEven;
-    }
-
-    final whitespace = tiles.singleWhere((tile) => tile.isWhitespace);
-    final whitespaceRow = whitespace.currentPosition.y;
-
-    if (((height - whitespaceRow) + 1).isOdd) {
-      return inversions.isEven;
-    } else {
-      return inversions.isOdd;
-    }
-  }
-
-  /// Gives the number of inversions in a puzzle given its tile arrangement.
-  ///
-  /// An inversion is when a tile of a lower value is in a greater position than
-  /// a tile of a higher value.
-  int countInversions() {
-    var count = 0;
-    for (var a = 0; a < tiles.length; a++) {
-      final tileA = tiles[a];
-      if (tileA.isWhitespace) {
-        continue;
-      }
-
-      for (var b = a + 1; b < tiles.length; b++) {
-        final tileB = tiles[b];
-        if (_isInversion(tileA, tileB)) {
-          count++;
-        }
-      }
-    }
-    return count;
-  }
-
-  /// Determines if the two tiles are inverted.
-  bool _isInversion(Tile a, Tile b) {
-    if (!b.isWhitespace && a.value != b.value) {
-      if (b.value < a.value) {
-        return b.currentPosition.compareTo(a.currentPosition) > 0;
-      } else {
-        return a.currentPosition.compareTo(b.currentPosition) > 0;
-      }
-    }
-    return false;
-  }
 
   /// Shifts one or many tiles in a row/column with the whitespace and returns
   /// the modified puzzle.
@@ -186,6 +133,7 @@ class Puzzle extends Equatable {
     return Puzzle(
         puzzleNumber: puzzleNumber,
         tiles: tiles,
+        explorer: explorer,
         maxNumberOfMoves: maxNumberOfMoves,
     );
   }
@@ -199,8 +147,120 @@ class Puzzle extends Equatable {
     return Puzzle(
         puzzleNumber: puzzleNumber,
         tiles: sortedTiles,
+        explorer: explorer,
         maxNumberOfMoves: maxNumberOfMoves,
     );
+  }
+
+  /// Move the explorer until it reaches
+  /// the edge of the puzzle or the whitespace tile.
+  Puzzle moveExplorer() {
+
+    var updatedTile = explorer.currentTile;
+    var updatedPath = explorer.nextPath;
+
+    while (true) {
+
+      final neighborTile = nextTile(updatedTile, updatedPath);
+
+      // if there is no neighbor tile, the explorer has reached the edge
+      // of the puzzle, and 'fallen off'.
+      if (neighborTile == null) {
+
+        final newExplorer = Explorer(
+          currentTile: updatedTile,
+          currentPath: updatedPath,
+          offBoard: true,
+        );
+
+        return Puzzle(
+            puzzleNumber: puzzleNumber,
+            tiles: tiles,
+            explorer: newExplorer,
+            maxNumberOfMoves: maxNumberOfMoves,
+        );
+      }
+
+      // if the explorer reaches the whitespace tile,
+      // stop at the end of the path
+      else if (neighborTile.isWhitespace == true) {
+
+        final newExplorer = Explorer(
+          currentTile: updatedTile,
+          currentPath: updatedPath,
+          offBoard: false,
+        );
+
+        return Puzzle(
+          puzzleNumber: puzzleNumber,
+          tiles: tiles,
+          explorer: newExplorer,
+          maxNumberOfMoves: maxNumberOfMoves,
+        );
+
+      }
+
+      // otherwise, the explorer's journey continues onto the neighbor tile.
+      // Correct the updated path to match the neighbor's.
+      else {
+        updatedTile = neighborTile;
+        updatedPath = oppositePath[updatedPath] ?? updatedPath;
+      }
+    }
+  }
+
+  /// Get the next tile if the explorer follows the next path
+  Tile? nextTile(Tile currentTile, int nextPath) {
+    final size = getDimension();
+
+    if ({0, 1}.contains(nextPath)) {
+      if (currentTile.currentPosition.y - 1 > 0) {
+        return tiles.singleWhere(
+                (tile) =>
+            (tile.currentPosition.x == currentTile.currentPosition.x) &
+            (tile.currentPosition.y == currentTile.currentPosition.y - 1)
+        );
+      }
+      else {
+        return null;
+      }
+    }
+    else if ({2, 3}.contains(nextPath)) {
+      if (currentTile.currentPosition.x + 1 < size) {
+        return tiles.singleWhere(
+                (tile) =>
+            (tile.currentPosition.x == currentTile.currentPosition.x + 1) &
+            (tile.currentPosition.y == currentTile.currentPosition.y)
+        );
+      }
+      else {
+        return null;
+      }
+    }
+    else if ({4, 5}.contains(nextPath)) {
+      if (currentTile.currentPosition.y + 1 < size) {
+        return tiles.singleWhere(
+                (tile) =>
+            (tile.currentPosition.x == currentTile.currentPosition.x) &
+            (tile.currentPosition.y == currentTile.currentPosition.y + 1)
+        );
+      }
+      else {
+        return null;
+      }
+    }
+    else if ({6, 7}.contains(nextPath)) {
+      if (currentTile.currentPosition.x - 1 < 0) {
+        return tiles.singleWhere(
+                (tile) =>
+            (tile.currentPosition.x == currentTile.currentPosition.x - 1) &
+            (tile.currentPosition.y == currentTile.currentPosition.y)
+        );
+      }
+      else {
+        return null;
+      }
+    }
   }
 
   @override

@@ -19,7 +19,6 @@ var TILE_3 = Tile(
 );
 
 var WHITESPACE = Tile(
-          value: 0,
           isWhitespace: true,
 );
 

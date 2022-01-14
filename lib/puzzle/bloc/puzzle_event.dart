@@ -18,6 +18,16 @@ class PuzzleInitialized extends PuzzleEvent {
   List<Object> get props => [shufflePuzzle];
 }
 
+class ExplorerMoved extends PuzzleEvent {
+  const ExplorerMoved(this.explorer);
+
+  final Explorer explorer;
+
+  @override
+  List<Object> get props => [explorer];
+}
+
+
 class TileTapped extends PuzzleEvent {
   const TileTapped(this.tile);
 

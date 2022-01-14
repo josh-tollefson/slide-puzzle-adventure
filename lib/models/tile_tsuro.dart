@@ -1,13 +1,17 @@
 import 'package:equatable/equatable.dart';
 import 'package:very_good_slide_puzzle/models/models.dart';
 
+/// Path on the opposite side of the tile
+/// Used to get the paths of neighboring tiles
+Map<int,int> oppositePath = {0:5, 1:4, 2:7, 3:6, 4:1, 5:0, 6:3, 7:2};
+
 /// {@template tile}
 /// Model for a puzzle tile.
 /// {@endtemplate}
 class Tile extends Equatable {
   /// {@macro tile}
-  Tile({
-    required this.value,
+  const Tile({
+    this.value = 0,
     this.startPosition = const Position(x: 0, y: 0),
     this.currentPosition = const Position(x: 0, y: 0),
     this.paths = const {},
@@ -20,10 +24,10 @@ class Tile extends Equatable {
   final int value;
 
   /// The starting 2D [Position] of the [Tile].
-  Position startPosition;
+  final Position startPosition;
 
   /// The current 2D [Position] of the [Tile].
-  Position currentPosition;
+  final Position currentPosition;
 
   /// Dictionary containing all paths
   /// --- 0 --- 1 ---
