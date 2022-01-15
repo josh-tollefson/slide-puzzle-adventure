@@ -10,7 +10,7 @@ part 'puzzle_state.dart';
 class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
   PuzzleBloc(this._level) : super(const PuzzleState()) {
     on<PuzzleInitialized>(_onPuzzleInitialized);
-    // on<ExplorerMoved>(_onExplorerMoved);
+    on<ExplorerMoved>(_onExplorerMoved);
     on<TileTapped>(_onTileTapped);
     on<PuzzleReset>(_onPuzzleReset);
   }
@@ -30,8 +30,39 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
   }
 
   void _onExplorerMoved(ExplorerMoved event, Emitter<PuzzleState> emit) {
+
     if (state.puzzleStatus == PuzzleStatus.incomplete) {
-      
+      final mutablePuzzle = Puzzle(
+        puzzleNumber: state.puzzle.puzzleNumber,
+        tiles: [...state.puzzle.tiles],
+        explorer: state.puzzle.explorer,
+        maxNumberOfMoves: state.puzzle.maxNumberOfMoves,
+      );
+
+      final puzzle = mutablePuzzle.moveExplorer();
+      print(puzzle.explorer);
+      if (puzzle.explorer.offBoard) {
+        emit(
+            state.copyWith(
+              puzzle: puzzle.sort(),
+              puzzleStatus: PuzzleStatus.lost,
+              tileMovementStatus: TileMovementStatus.nothingTapped,
+              numberOfMoves: state.numberOfMoves,
+              lastTappedTile: state.lastTappedTile,
+            ),
+        );
+      }
+      else{
+        emit(
+          state.copyWith(
+            puzzle: puzzle.sort(),
+            puzzleStatus: PuzzleStatus.incomplete,
+            tileMovementStatus: TileMovementStatus.nothingTapped,
+            numberOfMoves: state.numberOfMoves,
+            lastTappedTile: state.lastTappedTile,
+          ),
+        );
+      }
     }
   }
 
@@ -124,10 +155,19 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
       }
     }
 
+    final newExplorerTile = newTiles.singleWhere(
+        (tile) => tile.value == currentPuzzle.explorer.currentTile.value
+    );
+
+    final newExplorer = Explorer(
+      currentTile: newExplorerTile,
+      currentPath: currentPuzzle.explorer.currentPath,
+    );
+
     final newPuzzle = Puzzle(
       puzzleNumber: currentPuzzle.puzzleNumber,
       tiles: newTiles,
-      explorer: currentPuzzle.explorer,
+      explorer: newExplorer,
       maxNumberOfMoves: currentPuzzle.maxNumberOfMoves,
     );
 

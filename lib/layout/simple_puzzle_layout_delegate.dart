@@ -39,6 +39,11 @@ class SimplePuzzleLayoutDelegate extends PuzzleLayoutDelegate {
           medium: 48,
         ),
         ResponsiveLayoutBuilder(
+          small: (_, child) => const SimpleMoveExplorerButton(),
+          medium: (_, child) => const SimpleMoveExplorerButton(),
+          large: (_, __) => const SizedBox(),
+        ),
+        ResponsiveLayoutBuilder(
           small: (_, child) => const SimplePuzzleResetButton(),
           medium: (_, child) => const SimplePuzzleResetButton(),
           large: (_, __) => const SizedBox(),
@@ -202,7 +207,18 @@ class SimpleStartSection extends StatelessWidget {
           remainingNumberOfMoves: state.remainingNumberOfMoves,
           maxNumberOfMoves: state.puzzle.maxNumberOfMoves,
         ),
+        ExplorerInfo(
+          explorerTileValue: state.puzzle.explorer.currentTile.value,
+          explorerPath: state.puzzle.explorer.currentPath,
+          explorerNextPath: state.puzzle.explorer.nextPath,
+          offBoard: state.puzzle.explorer.offBoard,
+        ),
         const ResponsiveGap(large: 32),
+        ResponsiveLayoutBuilder(
+          small: (_, __) => const SizedBox(),
+          medium: (_, __) => const SizedBox(),
+          large: (_, __) => const SimplePuzzleResetButton(),
+        ),
         ResponsiveLayoutBuilder(
           small: (_, __) => const SizedBox(),
           medium: (_, __) => const SizedBox(),
@@ -370,7 +386,7 @@ class SimplePuzzleShuffleButton extends StatelessWidget {
 }
 
 /// {@template puzzle_shuffle_button}
-/// Displays the button to shuffle the puzzle.
+/// Displays the button to reset the puzzle.
 /// {@endtemplate}
 @visibleForTesting
 class SimplePuzzleResetButton extends StatelessWidget {
@@ -398,3 +414,34 @@ class SimplePuzzleResetButton extends StatelessWidget {
     );
   }
 }
+
+/// {@template puzzle_shuffle_button}
+/// Displays the button to move the explorer.
+/// {@endtemplate}
+@visibleForTesting
+class SimpleMoveExplorerButton extends StatelessWidget {
+  /// {@macro puzzle_shuffle_button}
+  const SimpleMoveExplorerButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return PuzzleButton(
+      textColor: PuzzleColors.primary0,
+      backgroundColor: PuzzleColors.primary6,
+      onPressed: () => context.read<PuzzleBloc>().add(const ExplorerMoved()),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/shuffle_icon.png',
+            width: 17,
+            height: 17,
+          ),
+          const Gap(10),
+          Text(context.l10n.puzzleMoveExplorer),
+        ],
+      ),
+    );
+  }
+}
+
