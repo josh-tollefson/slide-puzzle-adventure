@@ -161,7 +161,9 @@ class Puzzle extends Equatable {
 
     while (true) {
 
+      print(updatedTile);
       final neighborTile = nextTile(updatedTile, updatedPath);
+      print(neighborTile);
 
       // if there is no neighbor tile, the explorer has reached the edge
       // of the puzzle, and 'fallen off'.
@@ -185,10 +187,12 @@ class Puzzle extends Equatable {
       // stop at the end of the path
       else if (neighborTile.isWhitespace == true) {
 
+        print('HI ${updatedTile}');
+        print('HI ${updatedPath}');
+
         final newExplorer = Explorer(
           currentTile: updatedTile,
           currentPath: updatedPath,
-          offBoard: false,
         );
 
         return Puzzle(
@@ -204,7 +208,7 @@ class Puzzle extends Equatable {
       // Correct the updated path to match the neighbor's.
       else {
         updatedTile = neighborTile;
-        updatedPath = oppositePath[updatedPath] ?? updatedPath;
+        updatedPath = neighborTile.paths[oppositePath[updatedPath]] ?? updatedPath;
       }
     }
   }
@@ -226,7 +230,7 @@ class Puzzle extends Equatable {
       }
     }
     else if ({2, 3}.contains(nextPath)) {
-      if (currentTile.currentPosition.x + 1 < size) {
+      if (currentTile.currentPosition.x + 1 <= size) {
         return tiles.singleWhere(
                 (tile) =>
             (tile.currentPosition.x == currentTile.currentPosition.x + 1) &
@@ -238,7 +242,7 @@ class Puzzle extends Equatable {
       }
     }
     else if ({4, 5}.contains(nextPath)) {
-      if (currentTile.currentPosition.y + 1 < size) {
+      if (currentTile.currentPosition.y + 1 <= size) {
         return tiles.singleWhere(
                 (tile) =>
             (tile.currentPosition.x == currentTile.currentPosition.x) &

@@ -24,6 +24,10 @@
     "@puzzleShuffle": {
         "description": "Shown on the button that shuffle the puzzle"
     },
+    "puzzleMoveExplorer": "Move Explorer",
+    "@puzzleMoveExplorer": {
+        "description": "Moves the explorer on the puzzle"
+    },
      "puzzleReset": "Reset",
      "@puzzleReset": {
         "description": "Shown on the button that resets the puzzle"
