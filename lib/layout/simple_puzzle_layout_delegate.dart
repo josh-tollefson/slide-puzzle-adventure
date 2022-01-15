@@ -246,18 +246,14 @@ class SimplePuzzleTitle extends StatelessWidget {
   /// The state of the puzzle.
   final PuzzleStatus status;
 
-
   @override
   Widget build(BuildContext context) {
-
     String getPuzzleTitle(PuzzleStatus status) {
       if (status == PuzzleStatus.complete) {
         return context.l10n.puzzleCompleted;
-      }
-      else if (status == PuzzleStatus.lost) {
+      } else if (status == PuzzleStatus.lost) {
         return context.l10n.puzzleLost;
-      }
-      else {
+      } else {
         return context.l10n.puzzleChallengeTitle;
       }
     }
@@ -304,8 +300,8 @@ class SimplePuzzleBoard extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: size,
-      mainAxisSpacing: 0,//spacing,
-      crossAxisSpacing: 0,//spacing,
+      mainAxisSpacing: 0, //spacing,
+      crossAxisSpacing: 0, //spacing,
       children: tiles,
     );
   }
@@ -340,18 +336,65 @@ class SimplePuzzleTile extends StatelessWidget {
   /// The state of the puzzle.
   final PuzzleState state;
 
+  Alignment _explorerAlignment(Explorer explorer) {
+    switch (explorer.currentPath) {
+      case 0:
+        return Alignment(-0.5, -1.25);
+      case 1:
+        return Alignment(0.5, -1.25);
+      case 2:
+        return Alignment(1.25, -0.5);
+      case 3:
+        return Alignment(1.25, 0.5);
+      case 4:
+        return Alignment(0.5, 1.25);
+      case 5:
+        return Alignment(-0.5, 1.25);
+      case 6:
+        return Alignment(-1.25, 0.5);
+      case 7:
+        return Alignment(-1.25, -0.5);
+      default:
+        return Alignment(0, 0);
+    }
+  }
+
+  Widget _showDash(BuildContext context) {
+    return Container(
+      alignment:
+          _explorerAlignment(context.read<PuzzleBloc>().state.puzzle.explorer),
+      child: SizedBox(
+        width: 70,
+        height: 70,
+        child: Image.asset(
+          '../assets/images/simple_dash_small.png',
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = context.select((ThemeBloc bloc) => bloc.state.theme);
 
     return GestureDetector(
-        onTap: () => context.read<PuzzleBloc>().add(TileTapped(tile)),
-        child: Image.asset(
+      onTap: () => context.read<PuzzleBloc>().add(TileTapped(tile)),
+      child: Stack(children: [
+        // TODO: We shouldn't need to specify SizedBox, layout is a bit janky right now.
+        SizedBox(
+          width: 250,
+          height: 250,
+          child: Image.asset(
             '../assets/images/scenery/${tile.image}',
             fit: BoxFit.cover,
+          ),
         ),
+        if (context.read<PuzzleBloc>().state.puzzle.explorer.currentTile ==
+            tile)
+          _showDash(context)
+      ]),
     );
-
   }
 }
 
@@ -444,4 +487,3 @@ class SimpleMoveExplorerButton extends StatelessWidget {
     );
   }
 }
-
