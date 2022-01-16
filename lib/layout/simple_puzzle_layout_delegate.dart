@@ -217,7 +217,7 @@ class SimpleStartSection extends StatelessWidget {
         ResponsiveLayoutBuilder(
           small: (_, __) => const SizedBox(),
           medium: (_, __) => const SizedBox(),
-          large: (_, __) => const SimplePuzzleResetButton(),
+          large: (_, __) => const SimpleMoveExplorerButton(),
         ),
         ResponsiveLayoutBuilder(
           small: (_, __) => const SizedBox(),

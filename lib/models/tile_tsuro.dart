@@ -71,6 +71,7 @@ class Tile extends Equatable {
     currentPosition,
     paths,
     markers,
+    image,
     isWhitespace,
   ];
 }
