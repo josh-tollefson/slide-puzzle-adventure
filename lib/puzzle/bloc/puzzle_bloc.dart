@@ -31,31 +31,32 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
 
   void _onExplorerMoved(ExplorerMoved event, Emitter<PuzzleState> emit) {
 
+    final mutablePuzzle = Puzzle(
+      puzzleNumber: state.puzzle.puzzleNumber,
+      tiles: [...state.puzzle.tiles],
+      explorer: state.puzzle.explorer,
+      maxNumberOfMoves: state.puzzle.maxNumberOfMoves,
+    );
+
     if (state.puzzleStatus == PuzzleStatus.incomplete) {
-      final mutablePuzzle = Puzzle(
-        puzzleNumber: state.puzzle.puzzleNumber,
-        tiles: [...state.puzzle.tiles],
-        explorer: state.puzzle.explorer,
-        maxNumberOfMoves: state.puzzle.maxNumberOfMoves,
-      );
 
       final puzzle = mutablePuzzle.moveExplorer();
-      print(puzzle.explorer);
+      // print(puzzle.explorer);
       if (puzzle.explorer.offBoard) {
         emit(
-            state.copyWith(
-              puzzle: puzzle.sort(),
-              puzzleStatus: PuzzleStatus.lost,
-              tileMovementStatus: TileMovementStatus.nothingTapped,
-              numberOfMoves: state.numberOfMoves,
-              lastTappedTile: state.lastTappedTile,
-            ),
+          state.copyWith(
+            puzzle: puzzle,
+            puzzleStatus: PuzzleStatus.lost,
+            tileMovementStatus: TileMovementStatus.nothingTapped,
+            numberOfMoves: state.numberOfMoves,
+            lastTappedTile: state.lastTappedTile,
+          ),
         );
       }
-      else{
+      else {
         emit(
           state.copyWith(
-            puzzle: puzzle.sort(),
+            puzzle: puzzle,
             puzzleStatus: PuzzleStatus.incomplete,
             tileMovementStatus: TileMovementStatus.nothingTapped,
             numberOfMoves: state.numberOfMoves,
@@ -130,7 +131,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
     );
   }
 
-  /// Build a randomized, solvable puzzle of the given size.
+  /// Build the puzzle with the given level.
   Puzzle _generatePuzzleLevel(int level) {
     final currentPuzzle = levels[level - 1];
     final currentTiles = currentPuzzle.tiles;

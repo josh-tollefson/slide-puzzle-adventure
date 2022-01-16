@@ -20,9 +20,6 @@ class PuzzleInitialized extends PuzzleEvent {
 
 class ExplorerMoved extends PuzzleEvent {
   const ExplorerMoved();
-
-  @override
-  List<Object> get props => [];
 }
 
 

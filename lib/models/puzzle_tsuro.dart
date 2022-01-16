@@ -115,6 +115,9 @@ class Puzzle extends Equatable {
   /// Returns puzzle with new tile arrangement after individually swapping each
   /// tile in tilesToSwap with the whitespace.
   Puzzle _swapTiles(List<Tile> tilesToSwap) {
+
+    var newExplorer = explorer;
+
     for (final tileToSwap in tilesToSwap.reversed) {
       final tileIndex = tiles.indexOf(tileToSwap);
       final tile = tiles[tileIndex];
@@ -128,12 +131,20 @@ class Puzzle extends Equatable {
       tiles[whitespaceTileIndex] = whitespaceTile.copyWith(
         currentPosition: tile.currentPosition,
       );
+
+      if (explorer.currentTile.value == tile.value) {
+        newExplorer = Explorer(
+          currentTile: tiles[tileIndex],
+          currentPath: explorer.currentPath,
+          offBoard: explorer.offBoard,
+        );
+      }
     }
 
     return Puzzle(
         puzzleNumber: puzzleNumber,
         tiles: tiles,
-        explorer: explorer,
+        explorer: newExplorer,
         maxNumberOfMoves: maxNumberOfMoves,
     );
   }
@@ -161,7 +172,7 @@ class Puzzle extends Equatable {
 
     while (true) {
 
-      print(updatedTile);
+      // print(updatedTile);
       final neighborTile = nextTile(updatedTile, updatedPath);
       print(neighborTile);
 
@@ -187,8 +198,8 @@ class Puzzle extends Equatable {
       // stop at the end of the path
       else if (neighborTile.isWhitespace == true) {
 
-        print('HI ${updatedTile}');
-        print('HI ${updatedPath}');
+        // print('HI ${updatedTile}');
+        // print('HI ${updatedPath}');
 
         final newExplorer = Explorer(
           currentTile: updatedTile,
@@ -268,5 +279,8 @@ class Puzzle extends Equatable {
   }
 
   @override
-  List<Object> get props => [tiles];
+  List<Object> get props => [
+    tiles,
+    explorer,
+  ];
 }
