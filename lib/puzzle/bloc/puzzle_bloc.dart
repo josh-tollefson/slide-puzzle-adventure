@@ -41,7 +41,6 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
     if (state.puzzleStatus == PuzzleStatus.incomplete) {
 
       final puzzle = mutablePuzzle.moveExplorer();
-      // print(puzzle.explorer);
       if (puzzle.explorer.offBoard) {
         emit(
           state.copyWith(

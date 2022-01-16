@@ -18,6 +18,36 @@ var TILE_3 = Tile(
           image: 'tile_3_filled.png',
 );
 
+var TILE_4 = Tile(
+  value: 4,
+  paths: {0:5,1:7,2:6,3:4,4:5,5:0,6:2,7:1},
+  image: 'tile_3_filled.png',
+);
+
+var TILE_5 = Tile(
+  value: 5,
+  paths: {0:5,1:7,2:6,3:4,4:5,5:0,6:2,7:1},
+  image: 'tile_3_filled.png',
+);
+
+var TILE_6 = Tile(
+  value: 6,
+  paths: {0:5,1:7,2:6,3:4,4:5,5:0,6:2,7:1},
+  image: 'tile_3_filled.png',
+);
+
+var TILE_7 = Tile(
+  value: 7,
+  paths: {0:5,1:7,2:6,3:4,4:5,5:0,6:2,7:1},
+  image: 'tile_3_filled.png',
+);
+
+var TILE_8 = Tile(
+  value: 8,
+  paths: {0:5,1:7,2:6,3:4,4:5,5:0,6:2,7:1},
+  image: 'tile_3_filled.png',
+);
+
 var WHITESPACE = Tile(
           isWhitespace: true,
 );

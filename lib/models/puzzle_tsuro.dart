@@ -73,16 +73,19 @@ class Puzzle extends Equatable {
   /// tile.
   bool isTileMovable(Tile tile) {
     final whitespaceTile = getWhitespaceTile();
+    final deltaX = whitespaceTile.currentPosition.x - tile.currentPosition.x;
+    final deltaY = whitespaceTile.currentPosition.y - tile.currentPosition.y;
+
     if (tile == whitespaceTile) {
       return false;
     }
 
     // A tile must be in the same row or column as the whitespace to move.
-    if (whitespaceTile.currentPosition.x != tile.currentPosition.x &&
-        whitespaceTile.currentPosition.y != tile.currentPosition.y) {
-      return false;
+    if ((deltaX.abs() == 1 && deltaY.abs() == 0) ||
+        (deltaX.abs() == 0 && deltaY.abs() == 1)) {
+      return true;
     }
-    return true;
+    return false;
   }
 
 
@@ -265,7 +268,7 @@ class Puzzle extends Equatable {
       }
     }
     else if ({6, 7}.contains(nextPath)) {
-      if (currentTile.currentPosition.x - 1 < 0) {
+      if (currentTile.currentPosition.x - 1 > 0) {
         return tiles.singleWhere(
                 (tile) =>
             (tile.currentPosition.x == currentTile.currentPosition.x - 1) &
