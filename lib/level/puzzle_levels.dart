@@ -7,9 +7,14 @@ import 'package:very_good_slide_puzzle/tiles/tile_constants.dart';
 var levels =  [
   Puzzle(
       puzzleNumber: 1,
-      tiles: [TILE_1, TILE_2, TILE_3, TILE_4, TILE_5, TILE_6, TILE_7, TILE_8, WHITESPACE],
-      explorer: Explorer(currentTile: TILE_3, currentPath: 6),
-      maxNumberOfMoves: 5,
+      tiles: [TILE_1, TILE_2, TILE_3, WHITESPACE],
+      explorer: Explorer(
+        currentTile: TILE_1,
+        currentPath: 7,
+        destinationTile: TILE_3,
+        destinationPath: 2,
+      ),
+      maxNumberOfMoves: 3,
   ),
 ];
 

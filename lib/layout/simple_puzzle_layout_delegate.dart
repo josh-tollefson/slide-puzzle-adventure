@@ -207,12 +207,12 @@ class SimpleStartSection extends StatelessWidget {
           remainingNumberOfMoves: state.remainingNumberOfMoves,
           maxNumberOfMoves: state.puzzle.maxNumberOfMoves,
         ),
-        ExplorerInfo(
-          explorerTileValue: state.puzzle.explorer.currentTile.value,
-          explorerPath: state.puzzle.explorer.currentPath,
-          explorerNextPath: state.puzzle.explorer.nextPath,
-          offBoard: state.puzzle.explorer.offBoard,
-        ),
+        // ExplorerInfo(
+        //   explorerTileValue: state.puzzle.explorer.currentTile.value,
+        //   explorerPath: state.puzzle.explorer.currentPath,
+        //   explorerNextPath: state.puzzle.explorer.nextPath,
+        //   offBoard: state.puzzle.explorer.offBoard,
+        // ),
         const ResponsiveGap(large: 32),
         ResponsiveLayoutBuilder(
           small: (_, __) => const SizedBox(),
@@ -339,25 +339,49 @@ class SimplePuzzleTile extends StatelessWidget {
   Alignment _explorerAlignment(Explorer explorer) {
     switch (explorer.currentPath) {
       case 0:
-        return Alignment(-0.5, -1.25);
+        return Alignment(-0.5, -1.1);
       case 1:
-        return Alignment(0.5, -1.25);
+        return Alignment(0.5, -1.1);
       case 2:
-        return Alignment(1.25, -0.5);
+        return Alignment(1.1, -0.5);
       case 3:
-        return Alignment(1.25, 0.5);
+        return Alignment(1.1, 0.5);
       case 4:
-        return Alignment(0.5, 1.25);
+        return Alignment(0.5, 1.1);
       case 5:
-        return Alignment(-0.5, 1.25);
+        return Alignment(-0.5, 1.1);
       case 6:
-        return Alignment(-1.25, 0.5);
+        return Alignment(-1.1, 0.5);
       case 7:
-        return Alignment(-1.25, -0.5);
+        return Alignment(-1.1, -0.5);
       default:
         return Alignment(0, 0);
     }
   }
+
+  Alignment _destinationAlignment(Explorer explorer) {
+    switch (explorer.destinationPath) {
+      case 0:
+        return Alignment(-0.5, -1.0);
+      case 1:
+        return Alignment(0.5, -1.0);
+      case 2:
+        return Alignment(1.0, -0.5);
+      case 3:
+        return Alignment(1.0, 0.5);
+      case 4:
+        return Alignment(0.5, 1.0);
+      case 5:
+        return Alignment(-0.5, 1.0);
+      case 6:
+        return Alignment(-1.0, 0.5);
+      case 7:
+        return Alignment(-1.0, -0.5);
+      default:
+        return Alignment(0, 0);
+    }
+  }
+
 
   Widget _showDash(BuildContext context) {
     return Container(
@@ -373,6 +397,22 @@ class SimplePuzzleTile extends StatelessWidget {
       ),
     );
   }
+
+  Widget _showDestination(BuildContext context) {
+    return Container(
+      alignment:
+      _destinationAlignment(context.read<PuzzleBloc>().state.puzzle.explorer),
+      child: SizedBox(
+        width: 70,
+        height: 70,
+        child: Image.asset(
+          '../assets/images/scenery/trees_1.png',
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -393,6 +433,9 @@ class SimplePuzzleTile extends StatelessWidget {
         if (context.read<PuzzleBloc>().state.puzzle.explorer.currentTile ==
             tile)
           _showDash(context)
+        else if (context.read<PuzzleBloc>().state.puzzle.explorer.destinationTile.value ==
+            tile.value)
+          _showDestination(context)
       ]),
     );
   }

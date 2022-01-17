@@ -52,6 +52,18 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
           ),
         );
       }
+      else if (puzzle.explorer.reachedDestination) {
+        print(puzzle.explorer.reachedDestination);
+        emit(
+          state.copyWith(
+            puzzle: puzzle,
+            puzzleStatus: PuzzleStatus.complete,
+            tileMovementStatus: TileMovementStatus.nothingTapped,
+            numberOfMoves: state.numberOfMoves,
+            lastTappedTile: state.lastTappedTile,
+          ),
+        );
+      }
       else {
         emit(
           state.copyWith(
@@ -162,6 +174,8 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
     final newExplorer = Explorer(
       currentTile: newExplorerTile,
       currentPath: currentPuzzle.explorer.currentPath,
+      destinationTile: currentPuzzle.explorer.destinationTile,
+      destinationPath: currentPuzzle.explorer.destinationPath,
     );
 
     final newPuzzle = Puzzle(

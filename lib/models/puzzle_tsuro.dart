@@ -139,6 +139,8 @@ class Puzzle extends Equatable {
         newExplorer = Explorer(
           currentTile: tiles[tileIndex],
           currentPath: explorer.currentPath,
+          destinationTile: explorer.destinationTile,
+          destinationPath: explorer.destinationPath,
           offBoard: explorer.offBoard,
         );
       }
@@ -186,6 +188,8 @@ class Puzzle extends Equatable {
         final newExplorer = Explorer(
           currentTile: updatedTile,
           currentPath: updatedPath,
+          destinationTile: explorer.destinationTile,
+          destinationPath: explorer.destinationPath,
           offBoard: true,
         );
 
@@ -201,12 +205,11 @@ class Puzzle extends Equatable {
       // stop at the end of the path
       else if (neighborTile.isWhitespace == true) {
 
-        // print('HI ${updatedTile}');
-        // print('HI ${updatedPath}');
-
         final newExplorer = Explorer(
           currentTile: updatedTile,
           currentPath: updatedPath,
+          destinationTile: explorer.destinationTile,
+          destinationPath: explorer.destinationPath,
         );
 
         return Puzzle(
@@ -222,14 +225,53 @@ class Puzzle extends Equatable {
       // Correct the updated path to match the neighbor's.
       else {
         updatedTile = neighborTile;
+        final pathsToCheck = [
+          oppositePath[updatedPath] ?? updatedPath,
+          neighborTile.paths[oppositePath[updatedPath]] ?? updatedPath,
+        ];
+
+        for (final path in pathsToCheck) {
+          if (checkWin(path, updatedTile, explorer)) {
+            final newExplorer = Explorer(
+              currentTile: updatedTile,
+              currentPath: path,
+              destinationTile: explorer.destinationTile,
+              destinationPath: explorer.destinationPath,
+            );
+
+            return Puzzle(
+              puzzleNumber: puzzleNumber,
+              tiles: tiles,
+              explorer: newExplorer,
+              maxNumberOfMoves: maxNumberOfMoves,
+            );
+          }
+        }
+
+        // if not a win, then explorer continues onto neighbors tile and path.
         updatedPath = neighborTile.paths[oppositePath[updatedPath]] ?? updatedPath;
+        }
       }
     }
+
+  /// checks if the given path and tile are the explorer's destination.
+  bool checkWin(int pathToCheck, Tile updatedTile, Explorer explorer) {
+      final newExplorer = Explorer(
+        currentTile: updatedTile,
+        currentPath: pathToCheck,
+        destinationTile: explorer.destinationTile,
+        destinationPath: explorer.destinationPath,
+      );
+
+      if (newExplorer.reachedDestination) {
+        return true;
+      }
+      return false;
   }
 
   /// Get the next tile if the explorer follows the next path
   Tile? nextTile(Tile currentTile, int nextPath) {
-    final size = getDimension();
+    final int size = getDimension();
 
     if ({0, 1}.contains(nextPath)) {
       if (currentTile.currentPosition.y - 1 > 0) {

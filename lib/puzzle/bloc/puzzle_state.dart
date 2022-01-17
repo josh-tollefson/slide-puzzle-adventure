@@ -10,7 +10,12 @@ class PuzzleState extends Equatable {
   const PuzzleState({
     this.puzzle = const Puzzle(
         tiles: [],
-        explorer: Explorer(currentTile: Tile(), currentPath: 0),
+        explorer: Explorer(
+          currentTile: Tile(),
+          currentPath: 0,
+          destinationTile: Tile(),
+          destinationPath: 0,
+        ),
     ),
     this.puzzleStatus = PuzzleStatus.incomplete,
     this.tileMovementStatus = TileMovementStatus.nothingTapped,
@@ -32,9 +37,6 @@ class PuzzleState extends Equatable {
   /// The value is `null` if the user has not interacted with
   /// the puzzle yet.
   final Tile? lastTappedTile;
-
-  /// Number of tiles currently in their correct position.
-  // final int numberOfCorrectTiles;
 
   /// Number of tiles currently not in their correct position.
   int get remainingNumberOfMoves => puzzle.maxNumberOfMoves - numberOfMoves;

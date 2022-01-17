@@ -1,6 +1,6 @@
 {
     "@@locale": "en",
-    "puzzleChallengeTitle": "Puzzle Challenge",
+    "puzzleChallengeTitle": "Get Dash home!",
     "@puzzleChallengeTitle": {
         "description": "Shown as the title of the puzzle"
     },
@@ -24,7 +24,7 @@
     "@puzzleShuffle": {
         "description": "Shown on the button that shuffle the puzzle"
     },
-    "puzzleMoveExplorer": "Move Explorer",
+    "puzzleMoveExplorer": "Move Dash",
     "@puzzleMoveExplorer": {
         "description": "Moves the explorer on the puzzle"
     },
@@ -36,7 +36,7 @@
     "@puzzleLost": {
         "description": "Shown as the loss state when the puzzle took too many moves to complete"
     },
-    "puzzleCompleted": "Well done. Congrats!",
+    "puzzleCompleted": "Dash made it home. Congrats!",
     "@puzzleCompleted": {
         "description": "Shown as the success state when the puzzle is completed"
     }
