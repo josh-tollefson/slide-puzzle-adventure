@@ -403,8 +403,8 @@ class SimplePuzzleTile extends StatelessWidget {
       alignment:
       _destinationAlignment(context.read<PuzzleBloc>().state.puzzle.explorer),
       child: SizedBox(
-        width: 70,
-        height: 70,
+        width: 90,
+        height: 90,
         child: Image.asset(
           '../assets/images/scenery/trees_1.png',
           fit: BoxFit.cover,
@@ -430,12 +430,12 @@ class SimplePuzzleTile extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
+        if (context.read<PuzzleBloc>().state.puzzle.explorer.destinationTile.value ==
+            tile.value)
+          _showDestination(context),
         if (context.read<PuzzleBloc>().state.puzzle.explorer.currentTile ==
             tile)
-          _showDash(context)
-        else if (context.read<PuzzleBloc>().state.puzzle.explorer.destinationTile.value ==
-            tile.value)
-          _showDestination(context)
+          _showDash(context),
       ]),
     );
   }
