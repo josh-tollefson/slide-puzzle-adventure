@@ -12,6 +12,7 @@ class Explorer extends Equatable {
     required this.destinationTile,
     required this.destinationPath,
     this.offBoard = false,
+    required this.forwardDirection,
   });
 
   /// The current [Tile] the explorer is on.
@@ -32,6 +33,11 @@ class Explorer extends Equatable {
   /// Indicates whether the explorer is off the board.
   final bool offBoard;
 
+  /// Indicates the direction of the explorer.
+  /// true = move forward and follow path on current tile
+  /// false = reverse and follow path on neighbor tile
+  final bool forwardDirection;
+
   /// indicated whether the explorer reached its final destination.
   bool get reachedDestination =>
       (currentTile.value == destinationTile.value) &
@@ -44,5 +50,6 @@ class Explorer extends Equatable {
     destinationTile,
     destinationPath,
     offBoard,
+    forwardDirection,
   ];
 }

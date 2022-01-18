@@ -11,6 +11,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
   PuzzleBloc(this._level) : super(const PuzzleState()) {
     on<PuzzleInitialized>(_onPuzzleInitialized);
     on<ExplorerMoved>(_onExplorerMoved);
+    on<ExplorerReversed>(_onExplorerReversed);
     on<TileTapped>(_onTileTapped);
     on<PuzzleReset>(_onPuzzleReset);
   }
@@ -53,7 +54,6 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
         );
       }
       else if (puzzle.explorer.reachedDestination) {
-        print(puzzle.explorer.reachedDestination);
         emit(
           state.copyWith(
             puzzle: puzzle,
@@ -78,6 +78,20 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
     }
   }
 
+  void _onExplorerReversed(ExplorerReversed event, Emitter<PuzzleState> emit) {
+    final mutablePuzzle = state.puzzle.reverseExplorer();
+    print(mutablePuzzle.explorer);
+    emit(
+      state.copyWith(
+        puzzle: mutablePuzzle,
+        puzzleStatus: PuzzleStatus.incomplete,
+        tileMovementStatus: TileMovementStatus.nothingTapped,
+        numberOfMoves: state.numberOfMoves,
+        lastTappedTile: state.lastTappedTile,
+      ),
+    );
+  }
+
   void _onTileTapped(TileTapped event, Emitter<PuzzleState> emit) {
     final tappedTile = event.tile;
     if (state.puzzleStatus == PuzzleStatus.incomplete) {
@@ -99,7 +113,8 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
               lastTappedTile: tappedTile,
             ),
           );
-        } else {
+        }
+        else {
           if (state.remainingNumberOfMoves == 0) {
             emit(
               state.copyWith(
@@ -110,7 +125,8 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
                 lastTappedTile: tappedTile,
               ),
             );
-          } else {
+          }
+          else {
             emit(
               state.copyWith(
                 puzzle: puzzle.sort(),
@@ -171,11 +187,16 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
         (tile) => tile.value == currentPuzzle.explorer.currentTile.value
     );
 
+    final newDestinationTile = newTiles.singleWhere(
+            (tile) => tile.value == currentPuzzle.explorer.destinationTile.value
+    );
+
     final newExplorer = Explorer(
       currentTile: newExplorerTile,
       currentPath: currentPuzzle.explorer.currentPath,
-      destinationTile: currentPuzzle.explorer.destinationTile,
+      destinationTile: newDestinationTile,
       destinationPath: currentPuzzle.explorer.destinationPath,
+      forwardDirection: currentPuzzle.explorer.forwardDirection,
     );
 
     final newPuzzle = Puzzle(

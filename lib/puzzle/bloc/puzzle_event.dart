@@ -22,6 +22,9 @@ class ExplorerMoved extends PuzzleEvent {
   const ExplorerMoved();
 }
 
+class ExplorerReversed extends PuzzleEvent {
+  const ExplorerReversed();
+}
 
 class TileTapped extends PuzzleEvent {
   const TileTapped(this.tile);

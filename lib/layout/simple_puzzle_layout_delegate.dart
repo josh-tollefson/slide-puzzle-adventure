@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+
 import 'package:very_good_slide_puzzle/colors/colors.dart';
 import 'package:very_good_slide_puzzle/l10n/l10n.dart';
 import 'package:very_good_slide_puzzle/layout/layout.dart';
@@ -41,6 +44,11 @@ class SimplePuzzleLayoutDelegate extends PuzzleLayoutDelegate {
         ResponsiveLayoutBuilder(
           small: (_, child) => const SimpleMoveExplorerButton(),
           medium: (_, child) => const SimpleMoveExplorerButton(),
+          large: (_, __) => const SizedBox(),
+        ),
+        ResponsiveLayoutBuilder(
+          small: (_, child) => const SimpleReverseExplorerDirectionButton(),
+          medium: (_, child) => const SimpleReverseExplorerDirectionButton(),
           large: (_, __) => const SizedBox(),
         ),
         ResponsiveLayoutBuilder(
@@ -207,12 +215,6 @@ class SimpleStartSection extends StatelessWidget {
           remainingNumberOfMoves: state.remainingNumberOfMoves,
           maxNumberOfMoves: state.puzzle.maxNumberOfMoves,
         ),
-        // ExplorerInfo(
-        //   explorerTileValue: state.puzzle.explorer.currentTile.value,
-        //   explorerPath: state.puzzle.explorer.currentPath,
-        //   explorerNextPath: state.puzzle.explorer.nextPath,
-        //   offBoard: state.puzzle.explorer.offBoard,
-        // ),
         const ResponsiveGap(large: 32),
         ResponsiveLayoutBuilder(
           small: (_, __) => const SizedBox(),
@@ -382,6 +384,56 @@ class SimplePuzzleTile extends StatelessWidget {
     }
   }
 
+  Alignment _arrowAlignment(Explorer explorer) {
+    switch (explorer.currentPath) {
+      case 0:
+        return Alignment(-0.5, -0.5);
+      case 1:
+        return Alignment(0.5, -0.5);
+      case 2:
+        return Alignment(0.5, -0.5);
+      case 3:
+        return Alignment(0.5, 0.5);
+      case 4:
+        return Alignment(0.5, 0.5);
+      case 5:
+        return Alignment(-0.5, 0.5);
+      case 6:
+        return Alignment(-0.5, 0.5);
+      case 7:
+        return Alignment(-0.5, -0.5);
+      default:
+        return Alignment(0, 0);
+    }
+  }
+
+  double _arrowRotation(Explorer explorer)  {
+    /// direction the explorer is facing
+    final directionality = explorer.forwardDirection ? 1 : -1;
+
+    switch (explorer.currentPath) {
+      case 0:
+        return pi / 180 * 90 * directionality;
+      case 1:
+        return pi / 180 * 90 * directionality;
+      case 2:
+        return pi / 180 * (90 + 90 * directionality);
+      case 3:
+        return pi / 180 * (90 + 90 * directionality);
+      case 4:
+        return pi / 180 * -90 * directionality;
+      case 5:
+        return pi / 180 * -90 * directionality;
+      case 6:
+        return pi / 180 * (90 - 90 * directionality);
+      case 7:
+        return pi / 180 * (90 - 90 * directionality);
+      default:
+        return 0;
+    }
+  }
+
+
 
   Widget _showDash(BuildContext context) {
     return Container(
@@ -413,6 +465,24 @@ class SimplePuzzleTile extends StatelessWidget {
     );
   }
 
+  Widget _showArrow(BuildContext context) {
+    return Container(
+      alignment: _arrowAlignment(context.read<PuzzleBloc>().state.puzzle.explorer),
+      child: Transform.rotate(
+        angle: _arrowRotation(context.read<PuzzleBloc>().state.puzzle.explorer),
+        child: SizedBox(
+          width: 30,
+          height: 30,
+          child: Image.asset(
+            '../assets/images/arrow.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+      )
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -436,6 +506,9 @@ class SimplePuzzleTile extends StatelessWidget {
         if (context.read<PuzzleBloc>().state.puzzle.explorer.currentTile ==
             tile)
           _showDash(context),
+        if (context.read<PuzzleBloc>().state.puzzle.explorer.currentTile ==
+            tile)
+          _showArrow(context),
       ]),
     );
   }
@@ -525,6 +598,37 @@ class SimpleMoveExplorerButton extends StatelessWidget {
           ),
           const Gap(10),
           Text(context.l10n.puzzleMoveExplorer),
+        ],
+      ),
+    );
+  }
+}
+
+
+/// {@template puzzle_shuffle_button}
+/// Displays the button to reverse the explorer's direction.
+/// {@endtemplate}
+@visibleForTesting
+class SimpleReverseExplorerDirectionButton extends StatelessWidget {
+  /// {@macro puzzle_shuffle_button}
+  const SimpleReverseExplorerDirectionButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return PuzzleButton(
+      textColor: PuzzleColors.primary0,
+      backgroundColor: PuzzleColors.primary6,
+      onPressed: () => context.read<PuzzleBloc>().add(const ExplorerReversed()),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/shuffle_icon.png',
+            width: 17,
+            height: 17,
+          ),
+          const Gap(10),
+          Text(context.l10n.puzzleReverseExplorer),
         ],
       ),
     );

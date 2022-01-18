@@ -142,6 +142,7 @@ class Puzzle extends Equatable {
           destinationTile: explorer.destinationTile,
           destinationPath: explorer.destinationPath,
           offBoard: explorer.offBoard,
+          forwardDirection: explorer.forwardDirection,
         );
       }
     }
@@ -168,99 +169,113 @@ class Puzzle extends Equatable {
     );
   }
 
+  /// Advance the explorer one step, i.e. to the next adjacent path.
+  Explorer moveExplorerOnce(Explorer explorerToMove) {
+    final neighborTile = nextTile(
+        explorerToMove.currentTile,
+        explorerToMove.currentPath,
+        explorerToMove.forwardDirection
+    );
+
+    // if there is no neighbor tile, the explorer has reached the edge
+    // of the puzzle, and 'fallen off'.
+    if (neighborTile == null) {
+      final nextPath = explorerToMove.forwardDirection
+          ? explorerToMove.nextPath
+          : explorerToMove.currentPath;
+      return Explorer(
+        currentTile: explorerToMove.currentTile,
+        currentPath: nextPath,
+        destinationTile: explorerToMove.destinationTile,
+        destinationPath: explorerToMove.destinationPath,
+        offBoard: true,
+        forwardDirection: true,
+      );
+    }
+    else if (neighborTile.isWhitespace == true) {
+      final nextPath = explorerToMove.forwardDirection
+          ? explorerToMove.nextPath
+          : explorerToMove.currentPath;
+      return Explorer(
+        currentTile: explorerToMove.currentTile,
+        currentPath: nextPath,
+        destinationTile: explorerToMove.destinationTile,
+        destinationPath: explorerToMove.destinationPath,
+        forwardDirection: false,
+      );
+    }
+    else {
+      final nextTile = explorerToMove.forwardDirection
+          ? explorerToMove.currentTile
+          : neighborTile;
+      final nextPath = explorerToMove.forwardDirection
+          ? explorerToMove.nextPath
+          : oppositePath[explorerToMove.currentPath] ?? explorerToMove.currentPath;
+      return Explorer(
+        currentTile: nextTile,
+        currentPath: nextPath,
+        destinationTile: explorerToMove.destinationTile,
+        destinationPath: explorerToMove.destinationPath,
+        forwardDirection: !explorerToMove.forwardDirection,
+      );
+    }
+  }
+
   /// Move the explorer until it reaches
   /// the edge of the puzzle or the whitespace tile.
   Puzzle moveExplorer() {
 
-    var updatedTile = explorer.currentTile;
-    var updatedPath = explorer.nextPath;
+    var neighborTile = nextTile(
+      explorer.currentTile,
+      explorer.currentPath,
+      explorer.forwardDirection,
+    );
+
+    var movedExplorer = explorer;
 
     while (true) {
 
-      // print(updatedTile);
-      final neighborTile = nextTile(updatedTile, updatedPath);
-      print(neighborTile);
+      movedExplorer = moveExplorerOnce(movedExplorer);
 
-      // if there is no neighbor tile, the explorer has reached the edge
-      // of the puzzle, and 'fallen off'.
-      if (neighborTile == null) {
-
-        final newExplorer = Explorer(
-          currentTile: updatedTile,
-          currentPath: updatedPath,
-          destinationTile: explorer.destinationTile,
-          destinationPath: explorer.destinationPath,
-          offBoard: true,
-        );
-
-        return Puzzle(
-            puzzleNumber: puzzleNumber,
-            tiles: tiles,
-            explorer: newExplorer,
-            maxNumberOfMoves: maxNumberOfMoves,
-        );
-      }
-
-      // if the explorer reaches the whitespace tile,
-      // stop at the end of the path
-      else if (neighborTile.isWhitespace == true) {
-
-        final newExplorer = Explorer(
-          currentTile: updatedTile,
-          currentPath: updatedPath,
-          destinationTile: explorer.destinationTile,
-          destinationPath: explorer.destinationPath,
-        );
-
+      if (neighborTile == null || neighborTile.isWhitespace) {
         return Puzzle(
           puzzleNumber: puzzleNumber,
           tiles: tiles,
-          explorer: newExplorer,
+          explorer: movedExplorer,
           maxNumberOfMoves: maxNumberOfMoves,
         );
-
       }
 
-      // otherwise, the explorer's journey continues onto the neighbor tile.
-      // Correct the updated path to match the neighbor's.
+      // check if puzzle is won
       else {
-        updatedTile = neighborTile;
-        final pathsToCheck = [
-          oppositePath[updatedPath] ?? updatedPath,
-          neighborTile.paths[oppositePath[updatedPath]] ?? updatedPath,
-        ];
-
-        for (final path in pathsToCheck) {
-          if (checkWin(path, updatedTile, explorer)) {
-            final newExplorer = Explorer(
-              currentTile: updatedTile,
-              currentPath: path,
-              destinationTile: explorer.destinationTile,
-              destinationPath: explorer.destinationPath,
-            );
-
-            return Puzzle(
-              puzzleNumber: puzzleNumber,
-              tiles: tiles,
-              explorer: newExplorer,
-              maxNumberOfMoves: maxNumberOfMoves,
-            );
-          }
-        }
-
-        // if not a win, then explorer continues onto neighbors tile and path.
-        updatedPath = neighborTile.paths[oppositePath[updatedPath]] ?? updatedPath;
+        if (movedExplorer.currentTile.value == movedExplorer.destinationTile.value &&
+            movedExplorer.currentPath == movedExplorer.destinationPath) {
+          print(movedExplorer.reachedDestination);
+          return Puzzle(
+            puzzleNumber: puzzleNumber,
+            tiles: tiles,
+            explorer: movedExplorer,
+            maxNumberOfMoves: maxNumberOfMoves,
+          );
         }
       }
+
+      neighborTile = nextTile(
+        movedExplorer.currentTile,
+        movedExplorer.currentPath,
+        movedExplorer.forwardDirection,
+      );
     }
+  }
 
   /// checks if the given path and tile are the explorer's destination.
-  bool checkWin(int pathToCheck, Tile updatedTile, Explorer explorer) {
+  bool checkWin(int pathToCheck, Tile updatedTile) {
       final newExplorer = Explorer(
         currentTile: updatedTile,
         currentPath: pathToCheck,
         destinationTile: explorer.destinationTile,
         destinationPath: explorer.destinationPath,
+        forwardDirection: explorer.forwardDirection,
       );
 
       if (newExplorer.reachedDestination) {
@@ -269,9 +284,32 @@ class Puzzle extends Equatable {
       return false;
   }
 
+  /// Reverse the explorer's direction
+  Puzzle reverseExplorer() {
+    final newDirection = !explorer.forwardDirection;
+    final newExplorer = Explorer(
+      currentTile: explorer.currentTile,
+      currentPath: explorer.currentPath,
+      destinationTile: explorer.destinationTile,
+      destinationPath: explorer.destinationPath,
+      forwardDirection: newDirection,
+    );
+    print(newExplorer);
+
+    return Puzzle(
+      puzzleNumber: puzzleNumber,
+      tiles: tiles,
+      explorer: newExplorer,
+      maxNumberOfMoves: maxNumberOfMoves,
+    );
+  }
+
   /// Get the next tile if the explorer follows the next path
-  Tile? nextTile(Tile currentTile, int nextPath) {
-    final int size = getDimension();
+  Tile? nextTile(Tile currentTile, int currentPath, bool currentDirection) {
+    final size = getDimension();
+    final nextPath = currentDirection
+        ? currentTile.paths[currentPath] ?? currentPath
+        : currentPath;
 
     if ({0, 1}.contains(nextPath)) {
       if (currentTile.currentPosition.y - 1 > 0) {

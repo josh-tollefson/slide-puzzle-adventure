@@ -13,6 +13,7 @@ var levels =  [
         currentPath: 7,
         destinationTile: TILE_3,
         destinationPath: 2,
+        forwardDirection: true,
       ),
       maxNumberOfMoves: 3,
   ),

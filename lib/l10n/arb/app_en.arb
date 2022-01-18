@@ -28,6 +28,10 @@
     "@puzzleMoveExplorer": {
         "description": "Moves the explorer on the puzzle"
     },
+    "puzzleReverseExplorer": "Reversed Dash",
+    "@puzzleReverseExplorer": {
+        "description": "Reverses the explorer on the puzzle"
+    },
      "puzzleReset": "Reset",
      "@puzzleReset": {
         "description": "Shown on the button that resets the puzzle"

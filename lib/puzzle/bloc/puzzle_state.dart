@@ -15,6 +15,7 @@ class PuzzleState extends Equatable {
           currentPath: 0,
           destinationTile: Tile(),
           destinationPath: 0,
+          forwardDirection: true,
         ),
     ),
     this.puzzleStatus = PuzzleStatus.incomplete,
