@@ -203,7 +203,8 @@ class SimpleStartSection extends StatelessWidget {
         const PuzzleName(),
         const ResponsiveGap(large: 16),
         SimplePuzzleTitle(
-          status: state.puzzleStatus,
+            status: state.puzzleStatus,
+            offBoard: state.puzzle.explorer.offBoard,
         ),
         const ResponsiveGap(
           small: 12,
@@ -243,19 +244,26 @@ class SimplePuzzleTitle extends StatelessWidget {
   const SimplePuzzleTitle({
     Key? key,
     required this.status,
+    required this.offBoard,
   }) : super(key: key);
 
   /// The state of the puzzle.
   final PuzzleStatus status;
+  final bool offBoard;
 
   @override
   Widget build(BuildContext context) {
     String getPuzzleTitle(PuzzleStatus status) {
       if (status == PuzzleStatus.complete) {
         return context.l10n.puzzleCompleted;
-      } else if (status == PuzzleStatus.lost) {
+      }
+      else if (offBoard) {
+        return context.l10n.puzzleOffBoard;
+      }
+      else if (status == PuzzleStatus.lost) {
         return context.l10n.puzzleLost;
-      } else {
+      }
+      else {
         return context.l10n.puzzleChallengeTitle;
       }
     }

@@ -36,6 +36,10 @@
      "@puzzleReset": {
         "description": "Shown on the button that resets the puzzle"
     },
+    "puzzleOffBoard": "Dash moved off board. Try again!",
+    "@puzzleLost": {
+        "description": "Shown as the loss state if Dash moves off the edge of the board"
+    },
     "puzzleLost": "Too many moves. Try again!",
     "@puzzleLost": {
         "description": "Shown as the loss state when the puzzle took too many moves to complete"
