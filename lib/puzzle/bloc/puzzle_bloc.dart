@@ -8,26 +8,35 @@ part 'puzzle_event.dart';
 part 'puzzle_state.dart';
 
 class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
-  PuzzleBloc(this._level) : super(const PuzzleState()) {
+  PuzzleBloc() : super(const PuzzleState()) {
     on<PuzzleInitialized>(_onPuzzleInitialized);
+    on<NextLevel>(_onNextLevel);
     on<ExplorerMoved>(_onExplorerMoved);
     on<ExplorerReversed>(_onExplorerReversed);
     on<TileTapped>(_onTileTapped);
     on<PuzzleReset>(_onPuzzleReset);
   }
 
-  final int _level;
-
-  void _onPuzzleInitialized(
-      PuzzleInitialized event,
-      Emitter<PuzzleState> emit,
-      ) {
-    final puzzle = _generatePuzzleLevel(_level);
+  void _onPuzzleInitialized(PuzzleInitialized event, Emitter<PuzzleState> emit) {
+    final puzzle = _generatePuzzleLevel(state.level);
     emit(
       PuzzleState(
         puzzle: puzzle.sort(),
+        level: state.level,
       ),
     );
+  }
+
+  void _onNextLevel(NextLevel event, Emitter<PuzzleState> emit) {
+    if (state.puzzle.explorer.reachedDestination) {
+      final puzzle = _generatePuzzleLevel(state.level + 1);
+      emit(
+        PuzzleState(
+          puzzle: puzzle.sort(),
+          level: state.level + 1,
+        ),
+      );
+    }
   }
 
   void _onExplorerMoved(ExplorerMoved event, Emitter<PuzzleState> emit) {
@@ -45,6 +54,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
       if (puzzle.explorer.offBoard) {
         emit(
           state.copyWith(
+            level: state.level,
             puzzle: puzzle,
             puzzleStatus: PuzzleStatus.lost,
             tileMovementStatus: TileMovementStatus.nothingTapped,
@@ -56,6 +66,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
       else if (puzzle.explorer.reachedDestination) {
         emit(
           state.copyWith(
+            level: state.level,
             puzzle: puzzle,
             puzzleStatus: PuzzleStatus.complete,
             tileMovementStatus: TileMovementStatus.nothingTapped,
@@ -67,6 +78,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
       else {
         emit(
           state.copyWith(
+            level: state.level,
             puzzle: puzzle,
             puzzleStatus: PuzzleStatus.incomplete,
             tileMovementStatus: TileMovementStatus.nothingTapped,
@@ -80,9 +92,9 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
 
   void _onExplorerReversed(ExplorerReversed event, Emitter<PuzzleState> emit) {
     final mutablePuzzle = state.puzzle.reverseExplorer();
-    print(mutablePuzzle.explorer);
     emit(
       state.copyWith(
+        level: state.level,
         puzzle: mutablePuzzle,
         puzzleStatus: PuzzleStatus.incomplete,
         tileMovementStatus: TileMovementStatus.nothingTapped,
@@ -106,6 +118,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
         if (puzzle.isComplete()) {
           emit(
             state.copyWith(
+              level: state.level,
               puzzle: puzzle.sort(),
               puzzleStatus: PuzzleStatus.complete,
               tileMovementStatus: TileMovementStatus.moved,
@@ -118,6 +131,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
           if (state.remainingNumberOfMoves == 0) {
             emit(
               state.copyWith(
+                level: state.level,
                 puzzle: puzzle.sort(),
                 puzzleStatus: PuzzleStatus.lost,
                 tileMovementStatus: TileMovementStatus.moved,
@@ -129,6 +143,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
           else {
             emit(
               state.copyWith(
+                level: state.level,
                 puzzle: puzzle.sort(),
                 tileMovementStatus: TileMovementStatus.moved,
                 numberOfMoves: state.numberOfMoves + 1,
@@ -150,10 +165,11 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
   }
 
   void _onPuzzleReset(PuzzleReset event, Emitter<PuzzleState> emit) {
-    final puzzle = _generatePuzzleLevel(_level);
+    final puzzle = _generatePuzzleLevel(state.level);
     emit(
       PuzzleState(
         puzzle: puzzle.sort(),
+        level: state.level,
       ),
     );
   }
@@ -161,6 +177,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
   /// Build the puzzle with the given level.
   Puzzle _generatePuzzleLevel(int level) {
     final currentPuzzle = levels[level - 1];
+    print(currentPuzzle);
     final currentTiles = currentPuzzle.tiles;
     final size = currentPuzzle.getDimension();
     var newTiles = currentTiles;

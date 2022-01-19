@@ -41,21 +41,30 @@ class SimplePuzzleLayoutDelegate extends PuzzleLayoutDelegate {
           small: 32,
           medium: 48,
         ),
-        ResponsiveLayoutBuilder(
-          small: (_, child) => const SimpleMoveExplorerButton(),
-          medium: (_, child) => const SimpleMoveExplorerButton(),
-          large: (_, __) => const SizedBox(),
-        ),
-        ResponsiveLayoutBuilder(
-          small: (_, child) => const SimpleReverseExplorerDirectionButton(),
-          medium: (_, child) => const SimpleReverseExplorerDirectionButton(),
-          large: (_, __) => const SizedBox(),
-        ),
-        ResponsiveLayoutBuilder(
-          small: (_, child) => const SimplePuzzleResetButton(),
-          medium: (_, child) => const SimplePuzzleResetButton(),
-          large: (_, __) => const SizedBox(),
-        ),
+        if (state.puzzleStatus != PuzzleStatus.complete) ...[
+          ResponsiveLayoutBuilder(
+            small: (_, child) => const SimpleMoveExplorerButton(),
+            medium: (_, child) => const SimpleMoveExplorerButton(),
+            large: (_, __) => const SizedBox(),
+          ),
+          ResponsiveLayoutBuilder(
+            small: (_, child) => const SimpleReverseExplorerDirectionButton(),
+            medium: (_, child) => const SimpleReverseExplorerDirectionButton(),
+            large: (_, __) => const SizedBox(),
+          ),
+          ResponsiveLayoutBuilder(
+            small: (_, child) => const SimplePuzzleResetButton(),
+            medium: (_, child) => const SimplePuzzleResetButton(),
+            large: (_, __) => const SizedBox(),
+          ),
+        ]
+        else ...[
+          ResponsiveLayoutBuilder(
+            small: (_, child) => const SimpleNextLevelButton(),
+            medium: (_, child) => const SimpleNextLevelButton(),
+            large: (_, __) => const SizedBox(),
+          ),
+        ],
         const ResponsiveGap(
           small: 32,
           medium: 48,
@@ -217,6 +226,14 @@ class SimpleStartSection extends StatelessWidget {
           maxNumberOfMoves: state.puzzle.maxNumberOfMoves,
         ),
         const ResponsiveGap(large: 32),
+        if (state.puzzleStatus == PuzzleStatus.complete) ...[
+          ResponsiveLayoutBuilder(
+            small: (_, __) => const SizedBox(),
+            medium: (_, __) => const SizedBox(),
+            large: (_, __) => const SimpleNextLevelButton(),
+          ),
+        ]
+        else ...[
         ResponsiveLayoutBuilder(
           small: (_, __) => const SizedBox(),
           medium: (_, __) => const SizedBox(),
@@ -228,6 +245,7 @@ class SimpleStartSection extends StatelessWidget {
           large: (_, __) => const SimplePuzzleResetButton(),
         ),
       ],
+    ]
     );
   }
 }
@@ -441,8 +459,6 @@ class SimplePuzzleTile extends StatelessWidget {
     }
   }
 
-
-
   Widget _showDash(BuildContext context) {
     return Container(
       alignment:
@@ -637,6 +653,36 @@ class SimpleReverseExplorerDirectionButton extends StatelessWidget {
           ),
           const Gap(10),
           Text(context.l10n.puzzleReverseExplorer),
+        ],
+      ),
+    );
+  }
+}
+
+/// {@template puzzle_shuffle_button}
+/// Displays the button to advance to next level.
+/// {@endtemplate}
+@visibleForTesting
+class SimpleNextLevelButton extends StatelessWidget {
+  /// {@macro puzzle_shuffle_button}
+  const SimpleNextLevelButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return PuzzleButton(
+      textColor: PuzzleColors.primary0,
+      backgroundColor: PuzzleColors.primary6,
+      onPressed: () => context.read<PuzzleBloc>().add(const NextLevel()),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/shuffle_icon.png',
+            width: 17,
+            height: 17,
+          ),
+          const Gap(10),
+          Text(context.l10n.puzzleNextLevel),
         ],
       ),
     );

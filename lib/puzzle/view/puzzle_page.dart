@@ -50,7 +50,7 @@ class PuzzleView extends StatelessWidget {
           ticker: const Ticker(),
         ),
         child: BlocProvider(
-          create: (context) => PuzzleBloc(1)
+          create: (context) => PuzzleBloc()
             ..add(
               PuzzleInitialized(
                 shufflePuzzle: shufflePuzzle,

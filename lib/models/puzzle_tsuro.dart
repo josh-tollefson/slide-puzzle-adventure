@@ -250,7 +250,6 @@ class Puzzle extends Equatable {
       else {
         if (movedExplorer.currentTile.value == movedExplorer.destinationTile.value &&
             movedExplorer.currentPath == movedExplorer.destinationPath) {
-          print(movedExplorer.reachedDestination);
           return Puzzle(
             puzzleNumber: puzzleNumber,
             tiles: tiles,
@@ -310,6 +309,10 @@ class Puzzle extends Equatable {
     final nextPath = currentDirection
         ? currentTile.paths[currentPath] ?? currentPath
         : currentPath;
+
+    if (currentDirection) {
+      return currentTile;
+    }
 
     if ({0, 1}.contains(nextPath)) {
       if (currentTile.currentPosition.y - 1 > 0) {

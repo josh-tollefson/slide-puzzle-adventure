@@ -18,6 +18,10 @@ class PuzzleInitialized extends PuzzleEvent {
   List<Object> get props => [shufflePuzzle];
 }
 
+class NextLevel extends PuzzleEvent {
+  const NextLevel();
+}
+
 class ExplorerMoved extends PuzzleEvent {
   const ExplorerMoved();
 }
