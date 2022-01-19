@@ -47,5 +47,9 @@
     "puzzleCompleted": "Dash made it home. Congrats!",
     "@puzzleCompleted": {
         "description": "Shown as the success state when the puzzle is completed"
+    },
+    "puzzleNextLevel": "Next Level",
+    "@puzzleNextLevel": {
+        "description": "Advances to the next level"
     }
 }
