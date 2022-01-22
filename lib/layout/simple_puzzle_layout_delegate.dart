@@ -341,12 +341,65 @@ abstract class _TileFontSize {
   static double large = 54;
 }
 
+// class AnimatedPuzzleTile extends StatefulWidget {
+//   _AnimatedPuzzleTileState createState() => _AnimatedPuzzleTileState();
+// }
+//
+// class _AnimatedPuzzleTileState extends State<AnimatedPuzzleTile> {
+//   late double tileFontSize;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     tileFontSize = 0;
+//   }
+//
+//   void changeTile() {
+//     setState(() {
+//
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Center(
+//         child: Column(
+//           children: <Widget>[
+//             SizedBox(
+//               width: 128,
+//               height: 128,
+//               child: AnimatedContainer(
+//                 margin: EdgeInsets.all(margin),
+//                 decoration: BoxDecoration(
+//                   color: color,
+//                   borderRadius: BorderRadius.circular(borderRadius),
+//                 ),
+//                 duration: _duration,
+//               ),
+//             ),
+//             ElevatedButton(
+//               child: Text('change'),
+//               onPressed: () => change(),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+//
+//
+//
+// }
+//
+//
 /// {@template simple_puzzle_tile}
 /// Displays the puzzle tile associated with [tile] and
 /// the font size of [tileFontSize] based on the puzzle [state].
 /// {@endtemplate}
-@visibleForTesting
-class SimplePuzzleTile extends StatelessWidget {
+class SimplePuzzleTile extends StatefulWidget {
   /// {@macro simple_puzzle_tile}
   const SimplePuzzleTile({
     Key? key,
@@ -363,6 +416,19 @@ class SimplePuzzleTile extends StatelessWidget {
 
   /// The state of the puzzle.
   final PuzzleState state;
+
+  @override
+  State<SimplePuzzleTile> createState() => _SimplePuzzleTile();
+}
+
+/// {@template simple_puzzle_tile}
+/// Displays the puzzle tile associated with [tile] and
+/// the font size of [tileFontSize] based on the puzzle [state].
+/// {@endtemplate}
+@visibleForTesting
+class _SimplePuzzleTile extends State<SimplePuzzleTile> {
+
+  bool isHovering = false;
 
   Alignment _explorerAlignment(Explorer explorer) {
     switch (explorer.currentPath) {
@@ -506,34 +572,45 @@ class SimplePuzzleTile extends StatelessWidget {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final theme = context.select((ThemeBloc bloc) => bloc.state.theme);
 
-    return GestureDetector(
-      onTap: () => context.read<PuzzleBloc>().add(TileTapped(tile)),
-      child: Stack(children: [
-        // TODO: We shouldn't need to specify SizedBox, layout is a bit janky right now.
-        SizedBox(
-          width: 250,
-          height: 250,
-          child: Image.asset(
-            '../assets/images/scenery/${tile.image}',
-            fit: BoxFit.cover,
+    return MouseRegion(
+        onEnter: (PointerEvent details) => setState(() => isHovering = true),
+        onExit: (PointerEvent details) => setState(() => isHovering = false),
+        child: GestureDetector(
+          onTap: () => context.read<PuzzleBloc>().add(TileTapped(widget.tile)),
+          child: Stack(children: [
+            // TODO: We shouldn't need to specify SizedBox, layout is a bit janky right now.
+            SizedBox(
+              width: 250,
+              height: 250,
+              child: Image.asset(
+                '../assets/images/scenery/${widget.tile.image}',
+                fit: BoxFit.cover,
+              ),
+            ),
+            if (context.read<PuzzleBloc>().state.puzzle.explorer.destinationTile.value ==
+                widget.tile.value)
+              _showDestination(context),
+            if (context.read<PuzzleBloc>().state.puzzle.explorer.currentTile ==
+                widget.tile)
+              _showDash(context),
+            if (context.read<PuzzleBloc>().state.puzzle.explorer.currentTile ==
+                widget.tile)
+              _showArrow(context),
+            if (isHovering)
+              Container(
+                margin: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blueAccent),
+                ),
+              ),
+            ],
           ),
-        ),
-        if (context.read<PuzzleBloc>().state.puzzle.explorer.destinationTile.value ==
-            tile.value)
-          _showDestination(context),
-        if (context.read<PuzzleBloc>().state.puzzle.explorer.currentTile ==
-            tile)
-          _showDash(context),
-        if (context.read<PuzzleBloc>().state.puzzle.explorer.currentTile ==
-            tile)
-          _showArrow(context),
-      ]),
+        )
     );
   }
 }
