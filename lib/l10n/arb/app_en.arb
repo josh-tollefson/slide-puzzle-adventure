@@ -28,7 +28,7 @@
     "@puzzleMoveExplorer": {
         "description": "Moves the explorer on the puzzle"
     },
-    "puzzleReverseExplorer": "Reversed Dash",
+    "puzzleReverseExplorer": "Reverse Dash",
     "@puzzleReverseExplorer": {
         "description": "Reverses the explorer on the puzzle"
     },

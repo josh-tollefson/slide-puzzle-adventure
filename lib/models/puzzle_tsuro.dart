@@ -293,7 +293,6 @@ class Puzzle extends Equatable {
       destinationPath: explorer.destinationPath,
       forwardDirection: newDirection,
     );
-    print(newExplorer);
 
     return Puzzle(
       puzzleNumber: puzzleNumber,

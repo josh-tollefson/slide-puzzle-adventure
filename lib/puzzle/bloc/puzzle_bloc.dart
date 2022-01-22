@@ -177,7 +177,6 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
   /// Build the puzzle with the given level.
   Puzzle _generatePuzzleLevel(int level) {
     final currentPuzzle = levels[level - 1];
-    print(currentPuzzle);
     final currentTiles = currentPuzzle.tiles;
     final size = currentPuzzle.getDimension();
     var newTiles = currentTiles;
